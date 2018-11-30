@@ -49,10 +49,28 @@ pub struct Channel {
 
 #[derive(Debug, Deserialize)]
 pub struct UrlMap {
-    pub s: String,
-    pub m: String,
-    pub l: String,
-    pub o: String,
+    /// 20px
+    #[serde(rename = "s")]
+    pub small: String,
+    /// 100px
+    #[serde(rename = "m")]
+    pub middle: String,
+    /// 500px
+    #[serde(rename = "l")]
+    pub large: String,
+    /// maximum size
+    #[serde(rename = "o")]
+    pub original: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ActiveDate {
+    /// 2018-10-10T00:00:00.000Z
+    pub raw: String,
+    /// Oct 10th 2018
+    pub normalized: String,
+    /// 2018-10-10
+    pub calendar: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -65,6 +83,8 @@ pub struct Image {
     pub source_url: String,
     #[serde(rename = "webLocation")]
     pub web_location: String,
+    #[serde(rename = "activeDate")]
+    pub active_date: ActiveDate,
 }
 
 #[derive(Debug, Deserialize)]
@@ -84,16 +104,29 @@ pub fn fetch_channels() -> Result<Vec<Channel>, Error> {
     list.into()
 }
 
-pub fn fetch_channel_image(channel_id: String, datetime: String) -> Result<Image, Error> {
-    info!("Fetching image in channel {id} for {date}", id=channel_id, date=datetime);
-    let image: OptionalResponse<ImagePayload> = reqwest::get(
-        format!(
-            "{api}/channels/{id}/image/{date}",
-            api = API,
-            id = channel_id,
-            date = datetime
-        ).as_str(),
-    )?.json()?;
+fn url_of_image(channel_id: String, datetime: String) -> String {
+    format!(
+        "{api}/channels/{id}/image/{date}",
+        api = API,
+        id = channel_id,
+        date = datetime
+    )
+}
+
+pub fn fetch_channel_image<I, D>(channel_id: I, datetime: D) -> Result<Image, Error>
+where
+    I: Into<String>,
+    D: Into<String>,
+{
+    let channel_id = channel_id.into();
+    let datetime = datetime.into();
+    info!(
+        "Fetching image in channel {id} for {date}",
+        id = channel_id,
+        date = datetime
+    );
+    let url = url_of_image(channel_id, datetime);
+    let image: OptionalResponse<ImagePayload> = reqwest::get(url.as_str())?.json()?;
 
     let image: Result<ImagePayload, Error> = image.into();
 
