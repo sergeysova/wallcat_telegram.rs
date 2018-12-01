@@ -63,6 +63,12 @@ pub struct UrlMap {
     pub original: String,
 }
 
+impl UrlMap {
+    pub fn crop(&self, width: u16) -> String {
+        format!("{}?crop=fit&w={}", self.original, width)
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct ActiveDate {
     /// 2018-10-10T00:00:00.000Z

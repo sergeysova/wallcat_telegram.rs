@@ -45,7 +45,7 @@ fn main() -> Result<(), Error> {
 
         bot.request(telegram::SendPhoto {
             chat_id: chat_id.clone(),
-            photo: image.url.large,
+            photo: image.url.crop(1000),
             caption: Some(caption.clone()),
         }).expect("Photo should be sended");
 
