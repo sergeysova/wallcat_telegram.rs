@@ -32,7 +32,8 @@ fn main() -> Result<(), Error> {
         chat_id: chat_id.clone(),
         text: format!("{}", date::now_readable()),
         disable_notification: true,
-    }).expect("Message should be sended");
+    })
+    .expect("Message should be sended");
 
     for channel in channels.into_iter() {
         let image = wallcat::fetch_channel_image(channel.id, current_date.clone())?;
@@ -47,14 +48,16 @@ fn main() -> Result<(), Error> {
             chat_id: chat_id.clone(),
             photo: image.url.crop(1000),
             caption: Some(caption.clone()),
-        }).expect("Photo should be sended");
+        })
+        .expect("Photo should be sended");
 
         bot.request(telegram::SendDocument {
             chat_id: chat_id.clone(),
             document: image.url.original,
             caption: Some(caption.clone()),
             thumb: Some(image.url.small),
-        }).expect("Document should be sended");
+        })
+        .expect("Document should be sended");
     }
 
     Ok(())
