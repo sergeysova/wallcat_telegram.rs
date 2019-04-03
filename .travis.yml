@@ -16,3 +16,7 @@ fast_finish: true
 cache: cargo
 before_script:
   - touch .env
+
+script:
+  - cargo test
+  - cargo clippy -- -D warnings
