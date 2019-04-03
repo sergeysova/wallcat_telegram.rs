@@ -30,7 +30,7 @@ fn main() -> Result<(), Error> {
 
     bot.request(telegram::SendMessage {
         chat_id: chat_id.clone(),
-        text: format!("{}", date::now_readable()),
+        text: date::now_readable().to_string(),
         disable_notification: true,
     })
     .expect("Message should be sended");

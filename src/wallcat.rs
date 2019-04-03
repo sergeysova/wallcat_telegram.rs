@@ -14,9 +14,8 @@ pub struct ErrorPayload {
 
 #[derive(Debug, Fail)]
 pub enum WallcatError {
-    #[fail(display = "Network error")]
-    Network,
-
+    // #[fail(display = "Network error")]
+    // Network,
     #[fail(display = "Bad request: {}", reason)]
     BadRequest { reason: String },
 }
@@ -98,7 +97,7 @@ pub struct ImagePayload {
     pub image: Image,
 }
 
-const API: &'static str = "https://beta.wall.cat/api/v1";
+const API: &str = "https://beta.wall.cat/api/v1";
 
 pub fn fetch_channels() -> Result<Vec<Channel>, Error> {
     info!("Fetching channels");
