@@ -1,5 +1,6 @@
-use failure::Error;
+use failure::{Error, Fail};
 use reqwest;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Response<T> {
