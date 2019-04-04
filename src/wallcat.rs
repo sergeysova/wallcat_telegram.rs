@@ -110,7 +110,7 @@ pub fn fetch_channels() -> Result<Vec<Channel>, Error> {
     list.into()
 }
 
-fn url_of_image(channel_id: String, datetime: String) -> String {
+fn url_of_image(channel_id: &str, datetime: &str) -> String {
     format!(
         "{api}/channels/{id}/image/{date}",
         api = API,
@@ -121,11 +121,11 @@ fn url_of_image(channel_id: String, datetime: String) -> String {
 
 pub fn fetch_channel_image<I, D>(channel_id: I, datetime: D) -> Result<Image, Error>
 where
-    I: Into<String>,
-    D: Into<String>,
+    I: AsRef<str>,
+    D: AsRef<str>,
 {
-    let channel_id = channel_id.into();
-    let datetime = datetime.into();
+    let channel_id = channel_id.as_ref();
+    let datetime = datetime.as_ref();
     info!(
         "Fetching image in channel {id} for {date}",
         id = channel_id,

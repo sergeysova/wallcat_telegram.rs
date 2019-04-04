@@ -68,6 +68,10 @@ pub struct SendMessage {
 
     /// Sends the message silently. Users will receive a notification with no sound.
     pub disable_notification: bool,
+
+    /// Send Markdown or HTML, if you want Telegram apps to show bold,
+    /// italic, fixed-width text or inline URLs in your bot's message.
+    pub parse_mode: String,
 }
 
 impl TelegramMethod for SendMessage {
