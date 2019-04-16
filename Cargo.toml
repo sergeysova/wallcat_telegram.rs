@@ -1,6 +1,6 @@
 [package]
 name = "wallcat_telegram"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Sergey Sova <mail@sergeysova.com>"]
 publish = false
 license = "MIT"
