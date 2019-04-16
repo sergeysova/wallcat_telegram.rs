@@ -16,6 +16,7 @@ fast_finish: true
 cache: cargo
 before_script:
   - touch .env
+  - rustup component add clippy
 
 script:
   - cargo test
