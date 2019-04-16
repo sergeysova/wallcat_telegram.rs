@@ -105,23 +105,46 @@ fn publish_for_a_day(channel_id: String, date: String) -> Result<(), Error> {
 
         print!("Sending heading...  ");
         stdout().flush()?;
+
         let datetime = chrono::DateTime::parse_from_rfc3339(&date)?;
         let text = format!("<b>{}</b>", datetime.format("%d.%m.%Y"));
+
         bot.request(telegram::SendMessage {
-            chat_id: channel_id.to_string(),
+            chat_id: channel_id.clone(),
             text,
             disable_notification: true,
             parse_mode: String::from("HTML"),
         })?;
         println!("OK");
 
-        println!("Sending images:");
-        for image in images {
+        print!("Sending album...");
+        stdout().flush()?;
+        let mut group = telegram::SendMediaGroup::new(channel_id.clone());
+        for image in &images {
+            group.add_photo(telegram::InputMediaPhoto::new(
+                image.url.crop(1000).clone(),
+                image.channel.title.clone(),
+            ));
+        }
+        bot.request(group)?;
+        println!("OK");
+
+        println!("Sending documents");
+        for image in &images {
             print!(" - {}...  ", image.channel.title);
             stdout().flush()?;
-            publish_photo(&bot, &channel_id, &image)?;
+            publish_document(&bot, &channel_id.clone(), &image)?;
             println!("OK");
         }
+
+        print!("Sending poll...");
+        stdout().flush()?;
+        let mut poll = telegram::SendPoll::new(channel_id.clone(), "Please, select best channel");
+        for image in &images {
+            poll.add_option(image.channel.title.clone());
+        }
+        bot.request(poll)?;
+        println!("OK")
     } else {
         println!("Nothing");
     }
@@ -131,18 +154,12 @@ fn publish_for_a_day(channel_id: String, date: String) -> Result<(), Error> {
     Ok(())
 }
 
-fn publish_photo<C: ToString>(
+fn publish_document<C: ToString>(
     bot: &telegram::Telegram,
     channel_id: C,
     image: &wallcat::Image,
 ) -> Result<(), Error> {
-    let caption = format!("#{}", image.channel.title.replace(" ", ""));
-
-    bot.request(telegram::SendPhoto {
-        chat_id: channel_id.to_string(),
-        photo: image.url.crop(1000),
-        caption: Some(caption.clone()),
-    })?;
+    let caption = create_caption(&image.channel.title);
 
     bot.request(telegram::SendDocument {
         chat_id: channel_id.to_string(),
@@ -152,4 +169,8 @@ fn publish_photo<C: ToString>(
     })?;
 
     Ok(())
+}
+
+fn create_caption<T: AsRef<str>>(title: T) -> String {
+    format!("#{}", title.as_ref().replace(" ", ""))
 }
