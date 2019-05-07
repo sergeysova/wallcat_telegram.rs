@@ -136,15 +136,6 @@ fn publish_for_a_day(channel_id: String, date: String) -> Result<(), Error> {
             publish_document(&bot, &channel_id.clone(), &image)?;
             println!("OK");
         }
-
-        print!("Sending poll...");
-        stdout().flush()?;
-        let mut poll = telegram::SendPoll::new(channel_id.clone(), "Please, select best channel");
-        for image in &images {
-            poll.add_option(image.channel.title.clone());
-        }
-        bot.request(poll)?;
-        println!("OK")
     } else {
         println!("Nothing");
     }

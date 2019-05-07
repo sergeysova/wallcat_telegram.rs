@@ -58,55 +58,6 @@ impl TelegramMethod for SendMessage {
     }
 }
 
-/// Use this method to send a native poll. A native poll can't be sent to a private chat.
-/// On success, the sent Message is returned.
-#[derive(Debug, Serialize)]
-pub struct SendPoll {
-    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-    /// A native poll can't be sent to a private chat.
-    pub chat_id: String,
-
-    /// Poll question, 1-255 characters
-    pub question: String,
-
-    /// List of answer options, 2-10 strings 1-100 characters each
-    pub options: Vec<String>,
-
-    /// Sends the message silently. Users will receive a notification with no sound.
-    pub disable_notification: bool,
-
-    /// Send Markdown or HTML, if you want Telegram apps to show bold,
-    /// italic, fixed-width text or inline URLs in your bot's message.
-    pub parse_mode: String,
-}
-
-impl TelegramMethod for SendPoll {
-    fn method() -> String {
-        "sendPoll".to_string()
-    }
-}
-
-impl SendPoll {
-    pub fn new<C, Q>(chat_id: C, question: Q) -> Self
-    where
-        C: Into<String>,
-        Q: Into<String>,
-    {
-        SendPoll {
-            chat_id: chat_id.into(),
-            question: question.into(),
-            options: vec![],
-            disable_notification: false,
-            parse_mode: "HTML".to_string(),
-        }
-    }
-
-    pub fn add_option(&mut self, option: String) -> &mut Self {
-        self.options.push(option);
-        self
-    }
-}
-
 #[derive(Debug, Serialize)]
 pub struct SendMediaGroup {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername).
